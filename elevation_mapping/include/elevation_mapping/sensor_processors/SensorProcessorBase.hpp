@@ -146,13 +146,13 @@ public:
   Eigen::Affine3d transformationSensorToMap_;
 
   //! TF frame id of the map.
-  std::string mapFrameId_;
+  std::string mapFrameId_ = std::string("robot_base");
 
   //! TF frame id of the robot base.
-  std::string robotBaseFrameId_;
+  std::string robotBaseFrameId_ = std::string("robot_base");
 
   //! TF frame id of the range sensor for the point clouds.
-  std::string sensorFrameId_;
+  std::string sensorFrameId_ = std::string("lens_link");
 
   //! Ignore points above this height in map frame.
   double ignorePointsUpperThreshold_;

@@ -40,9 +40,12 @@ SensorProcessorBase::~SensorProcessorBase() {}
 
 bool SensorProcessorBase::readParameters()
 {
-  nodeHandle_.param("sensor_frame_id", sensorFrameId_, std::string("/sensor")); // TODO Fail if parameters are not found.
-  nodeHandle_.param("robot_base_frame_id", robotBaseFrameId_, std::string("/robot"));
-  nodeHandle_.param("map_frame_id", mapFrameId_, std::string("/map"));
+  // ROS_INFO("%s", "READING PARAMETERS!");
+  // nodeHandle_.param("sensor_frame_id", sensorFrameId_, std::string("/lens_link")); // TODO Fail if parameters are not found.
+  // nodeHandle_.param("robot_base_frame_id", robotBaseFrameId_, std::string("/robot"));
+  // nodeHandle_.param("map_frame_id", mapFrameId_, std::string("/map"));
+  // std::cout<<sensorFrameId_<<" "<<robotBaseFrameId_<<" "<<mapFrameId_<<std::endl;
+  // ROS_INFO("%s", "READING PARAMETERS COMPLETE!");
 
   double minUpdateRate;
   nodeHandle_.param("min_update_rate", minUpdateRate, 2.0);
@@ -63,15 +66,21 @@ bool SensorProcessorBase::process(
   ros::Time timeStamp;
   timeStamp.fromNSec(1000 * pointCloudInput->header.stamp);
   if (!updateTransformations(timeStamp)) return false;
-
+  ROS_INFO("%s", "Updated transforms...");
 	pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointCloudSensorFrame(new pcl::PointCloud<pcl::PointXYZRGB>);
+  ROS_INFO("%s %s", "Sensor frame id: ", sensorFrameId_);
 	transformPointCloud(pointCloudInput, pointCloudSensorFrame, sensorFrameId_);
 	cleanPointCloud(pointCloudSensorFrame);
+  ROS_INFO("%s", "Transformed point cloud to sensor frame...");
 
 	if (!transformPointCloud(pointCloudSensorFrame, pointCloudMapFrame, mapFrameId_)) return false;
+    ROS_INFO("%s", "Transformed point cloud to map frame...");
+
   std::vector<pcl::PointCloud<pcl::PointXYZRGB>::Ptr> pointClouds({pointCloudMapFrame, pointCloudSensorFrame});
   removePointsOutsideLimits(pointCloudMapFrame, pointClouds);
 	if (!computeVariances(pointCloudSensorFrame, robotPoseCovariance, variances)) return false;
+    ROS_INFO("%s", "Removed points outside limits...");
+
 
 	return true;
 }
