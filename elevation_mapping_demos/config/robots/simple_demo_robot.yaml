@@ -1,4 +1,4 @@
-point_cloud_topic: "/plane_removed"
+point_cloud_topic: "/tabletop"
 # sensor_frame_id: "lens_link"
 map_frame_id: "robot_base"
 robot_base_frame_id: "robot_base"
